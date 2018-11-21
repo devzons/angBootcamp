@@ -198,8 +198,17 @@ document.addEventListener("keypress", function(event) {
 });
 ```
 
-## Callbacks and How to respond to events
 
+
+## NODEJS
+
+### REPL (Read Evaluation Print Loops)
+
+// jshint esversion:6
 ```
+// jshint esversion:6
 
+const fs = require('fs');
+
+fs.copyFileSync("file1.txt", "file2.txt");
 ```
