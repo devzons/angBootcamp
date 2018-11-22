@@ -212,3 +212,88 @@ const fs = require('fs');
 
 fs.copyFileSync("file1.txt", "file2.txt");
 ```
+
+## Root and Route
+
+```
+//jshint esversion:6
+
+const express = require('express');
+
+const app = express();
+
+app.get("/", function(req, res) {
+  res.send("<h1>Hello, world!</h1>");
+});
+
+app.get("/about", function(req, res){
+  res.send("<h1>This is my About Page</h1>");
+});
+
+app.get("/contact", function(req, res){
+  res.send("<h1>Contact me at: dev@gmail.com</h1>");
+});
+
+app.listen(3000, function() {
+  console.log("Server started on port 3000");
+});
+```
+
+install nodemon
+
+```
+npm install -g nodemon
+```
+
+## body parser
+
+```
+npm install body-parser
+
+// app.js
+// jshint esversion:6cd
+
+const express     = require("express");
+const bodyParser  = require("body-parser");
+
+const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.get("/", function(req, res){
+  res.sendFile(__dirname + "/index.html");
+});
+
+app.post("/", function(req, res){
+  
+  var num1 = Number(req.body.num1);
+  var num2 = Number(req.body.num2);
+
+  var result = num1 + num2;
+
+  res.send("The result of the calculation is " + result);
+});
+
+app.listen(3000, function(){
+  console.log("Server started");
+});
+
+// index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Calculator</title>
+</head>
+<body>
+  <h1>Calculator</h1>
+  <form action="/" method="post">
+    <input type="text" name="num1" placeholder="First Number">
+    <input type="text" name="num2" placeholder="Second Number">
+    <button type="submit" name="submit">Calculate</button>
+  </form>
+</body>
+</html>
+
+```
