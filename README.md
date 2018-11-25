@@ -304,7 +304,20 @@ app.listen(3000, function(){
 
 ```
 git branch test-branch
-git branch
-git checkout test-granch
+git branch                // check branches
+git checkout test-granch  // switch to branch
+git add .
+git commit -m "Modify...."
 
+git branch
+git checkout master
+git merge test-branch
+git push master origin
+```
+
+
+## APIs
+
+```
+curl https://www.google.com
 ```
