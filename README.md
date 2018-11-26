@@ -425,6 +425,135 @@ $ git commit -am "make it better"
 $ git push heroku master
 ```
 
+## Template
+
+```
+// jshing esversion:6
+
+var express = require("express"),
+    bodyParser = require("body-parser");
+
+const app = express();
+
+app.get("/", function(req, res){
+    
+    var today = new Date();
+    var currentDay = today.getDay();
+
+    if(currentDay.getDay === 6 || currentDay.getDay === 0){
+        res.write("<h1>Yay it's the weekend</h1>");
+        res.write("<p>Let's go surfing!</p>");
+        res.send();
+    } else {
+        res.write("<h1>Nay! I have to work</h1>");
+        res.write("<p>It is not the weekend.</p>");
+        res.send();
+    }
+});
+
+app.listen(3030, function() {
+    console.log("Server is running on the port 3030.");
+});
+
+//===>
+var express = require("express"),
+    bodyParser = require("body-parser");
+
+const app = express();
+
+app.get("/", function(req, res){
+    
+    var today = new Date();
+    var currentDay = today.getDay();
+
+    if(currentDay.getDay === 6 || currentDay.getDay === 0){
+        res.sendFile(__dirname + "/weekend.html");
+    } else {
+        res.sendFile(__dirname + "/weekday.html");
+    }
+});
+
+app.listen(3030, function() {
+    console.log("Server is running on the port 3030.");
+});
+```
+
+## EJS Templating
+
+ejs.co
+
+```
+// jshing esversion:6
+
+var express = require("express"),
+    bodyParser = require("body-parser");
+
+const app = express();
+
+app.set("view engine", "ejs");
+
+app.get("/", function(req, res){
+    
+    var today = new Date();
+    var currentDay = today.getDay();
+    var day = "";
+
+    switch (currentDay) {
+        case 0:
+            day = "Sunday";
+            break;
+        case 1:
+            day = "Monday";
+            break;
+        case 2:
+            day = "Tuesday";
+            break;
+        case 3:
+            day = "Wednesday";
+            break;
+        case 4:
+            day = "Thursday";
+            break;
+        case 5:
+            day = "Friday";
+            break;
+        case 6:
+            day = "Saturday";
+            break;
+        default:
+            console.log("Error!");
+    }
+    res.render("list", {
+        day: day    
+    });
+});
+
+app.listen(3030, function() {
+    console.log("Server is running on the port 3030.");
+});
+
+// list.ejs -> views/list.ejs
+
+<body>
+    <h1>It's a <%= day %>!</h1>    
+</body>
+
+```
+
+## Running code inside the EJS template
+
+```
+// list.ejs
+<body>
+<% if (day === "Saturday" || day === "Sunday") { %>
+    <h1 style="color: purple"><%= day%> ToDo List</h1>
+<% } else { %>
+    <h1 style="color: blue"><%= day%> ToDo List</h1>
+<% } %>    
+</body>
+```
+
+
 
 
 
