@@ -298,9 +298,85 @@ app.listen(3000, function(){
 
 ```
 
-## Git, GitHub
+## API Bitcoin Ticker
 
-### Branch
+```
+npm install request
+```
+
+JSON
+```
+var wardrobe = {
+  door: 2,
+  drawers: 2,
+  color: "red"
+}
+
+// object to json data
+var objToJson = JSON.stringify(wardrobe);
+{"door":2,"drawers":2,"color":"red"}
+
+// json to object
+var jsonToObj = JSON.parse(objToJson);
+
+// index.js
+const express = require('express'),
+      bodyParser = require('body-parser'),
+      request = require('request');
+
+const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.get("/", function(req, res){
+  res.sendFile(__dirname + "/index.html");
+});
+
+app.post("/", function(req, res){
+
+  var crypto = req.body.crypto;
+  var fiat = req.body.fiat;
+
+  var baseURL = "https://apiv2.bitcoinaverage.com/indices/global/ticker/";
+
+  var finalURL = baseURL + crypto + fiat;
+  
+  request(finalURL, function(error, resolution, body){
+    
+    var data = JSON.parse(body);
+    var price = data.averages.week;
+    var currentDate = data.display_timestamp;
+
+    res.write("<p>The current date is " + currentDate + "</p>");
+    
+    res.write("<h1>The price of " + crypto + " is " + price + fiat + "</h1>");
+    
+    res.send();
+  });
+});
+
+app.listen(3000, function() {
+  console.log("Server is running on port 3000.");
+});
+
+//index.html
+<h1>Bitcoin Ticker</h1>
+  <form action="/" method="post">
+    <select name="crypto">  
+      <option value="BTC">Bitcoin</option>
+      <option value="ETH">Ethereum</option>
+      <option value="LTC">Litecoins</option>
+    </select>
+
+    <select name="fiat">  
+      <option value="USD">US Dollars</option>
+      <option value="GBP">GB Pounds</option>
+      <option value="EUR">EU Euros</option>
+    </select>
+    <button type="submit" name="button">Check</button>
+  </form>
+```
+
+## Branch
 
 ```
 git branch test-branch
