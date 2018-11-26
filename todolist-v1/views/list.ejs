@@ -7,10 +7,17 @@
     <title>To Do List</title>
 </head>
 <body>
-<% if (day === "Saturday" || day === "Sunday") { %>
-    <h1 style="color: purple"><%= day%> ToDo List</h1>
-<% } else { %>
-    <h1 style="color: blue"><%= day%> ToDo List</h1>
-<% } %>    
+
+    <h1><%= day %></h1>
+    <ul>
+    <% items.forEach(function(item){ %>
+        <li><%= item %></li>
+    <% }); %>
+    </ul>
+
+    <form action="/" method="post">
+        <input type="text" name="item" autofocus>
+        <button type="submit" name="button">Add List</button>
+    </form>
 </body>
 </html>

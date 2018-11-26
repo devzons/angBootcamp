@@ -629,7 +629,71 @@ app.listen(3030, function() {
 </body>
 ```
 
+## TODO List V1
 
+```
+// app.js
+// jshing esversion:6
+
+var express = require("express"),
+    bodyParser = require("body-parser");
+
+const app = express();
+
+var items = [];
+
+app.set("view engine", "ejs");
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.get("/", function(req, res){
+    
+    var today = new Date();
+    var currentDay = today.getDay();
+    
+    var options = {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+    };
+
+    var day = today.toLocaleDateString("en-US", options);
+
+    res.render("list", { day: day, items: items });
+});
+
+app.post("/", function(req, res){
+
+    var item = req.body.item;
+    items.push(item);
+
+    res.redirect("/");
+});
+
+app.listen(3030, function() {
+    console.log("Server is running on the port 3030.");
+});
+
+// list.ejs
+<body>
+
+    <h1><%= day %></h1>
+
+    <ul>
+        <% items.forEach(function(item){ %>
+            <li><%= item %></li>
+        <% }); %>
+    </ul>
+
+    <form class="" action="/" method="post">
+        <input type="text" name="item">
+        <button type="submit" name="button">Add List</button>
+    </form>
+
+</body>
+
+
+```
 
 
 
