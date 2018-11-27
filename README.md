@@ -696,5 +696,243 @@ app.listen(3030, function() {
 ```
 
 
+## SCOPE Concept
+
+var : global
+
+let : local
+
+const : local, can't change value once it is set a value
+
+```
+// app.js -- change var to let
+// jshing esversion:6
+
+const express = require("express"),
+      bodyParser = require("body-parser");
+
+const app = express();
+
+let items = ["list one", "list two", "list 3"];
+
+// default engin for EJS
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.get("/", function(req, res){
+   // get today
+   let today = new Date();
+
+   let options = {
+       weekday: "long",
+       day: "numeric",
+       month: "long"
+   };
+
+   let day = today.toLocaleDateString("en-US", options);
+   
+   // render
+   res.render("list", {day: day, items: items});
+    
+});
+
+app.post("/", function(req, res){
+
+    let item = req.body.item;
+    items.push(item);
+
+    res.redirect("/");
+});
+
+
+app.listen(3030, function() {
+    console.log("Server is running on port 3030");
+});
+
+// CSS
+
+html {
+  background-color: #E4E9FD;
+  background-image: -webkit-linear-gradient(65deg, #A683E3 50%, #E4E9FD 50%);
+  min-height: 1000px;
+  font-family: 'helvetica neue';
+}
+
+h1 {
+  color: #fff;
+  padding: 10px;
+}
+
+.box {
+  max-width: 400px;
+  margin: 50px auto;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 5px 5px 15px -5px rgba(0, 0, 0, 0.3);
+}
+
+#heading {
+  background-color: #A683E3;
+  text-align: center;
+}
+
+.item {
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #F1F1F1;
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+input:checked+p {
+  text-decoration: line-through;
+  text-decoration-color: #A683E3;
+}
+
+input[type="checkbox"] {
+  margin: 20px;
+}
+
+p {
+  margin: 0;
+  padding: 20px;
+  font-size: 20px;
+  font-weight: 200;
+  color: #00204a;
+}
+
+form {
+  text-align: center;
+  margin-left: 20px;
+}
+
+button {
+  min-height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  border-color: transparent;
+  background-color: #A683E3;
+  color: #fff;
+  font-size: 30px;
+  padding-bottom: 6px;
+  border-width: 0;
+}
+
+input[type="text"] {
+  text-align: center;
+  height: 60px;
+  top: 10px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  font-weight: 200;
+  width: 313px;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  box-shadow: inset 0 -3px 0 0 #A683E3;
+}
+
+::placeholder {
+  color: grey;
+  opacity: 1;
+}
+
+footer {
+  color: white;
+  color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+
+```
+
+## Templating VS Layout
+
+```
+// date.js
+// jshing esversion:6
+
+module.exports.getDate = function() {
+
+  const today = new Date();
+
+  const options = {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+  };
+
+  return today.toLocaleDateString("en-US", options);
+};
+
+module.exports.getDay = function() {
+
+  const today = new Date();
+
+  const options = {
+      weekday: "long"
+  };
+
+  return today.toLocaleDateString("en-US", options);
+};
+
+// app.js - new
+// jshing esversion:6
+
+const express = require("express"),
+      bodyParser = require("body-parser"),
+      date = require(__dirname + "/date.js");
+
+const app = express();
+
+const items = ["list one", "list two", "list 3"];
+const workItems = [];
+
+// default engin for EJS
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
+
+app.get("/", function(req, res){
+   const day = date.getDate();
+   
+   // render
+   res.render("list", {listTitle: day, newListItems: items});
+    
+});
+
+app.post("/", function(req, res){
+    console.log(req.body.list);
+    const item = req.body.newItem;
+
+    if (req.body.list === "Work List") {
+        workItems.push(item);
+        res.redirect("/work");
+    } else {
+        items.push(item);
+        res.redirect("/");
+    } 
+});
+
+app.get("/work", function(req, res){
+    res.render("list", {listTitle: "Work List", newListItems: workItems});
+});
+
+app.get("/about", function(req, res){
+    res.render("about");
+});
+
+app.listen(3030, function() {
+    console.log("Server is running on port 3030");
+});
+
+```
 
 
