@@ -936,3 +936,311 @@ app.listen(3030, function() {
 ```
 
 
+## Database
+
+### MongoDB
+
+```
+// Terminal
+
+cd ~
+
+touch .bash_profile
+
+vim .bash_profile
+
+// i for insert text
+// esc from get out of i
+// :wq!
+
+```
+
+MongoDB CRUD
+
+```
+use shopDB
+db.products.insertOne({})
+
+db.products.find()
+
+db.products.find({price: {$gt: 1}})
+db.products.find({_id: 1}, {name: 1})
+```
+UPDATE
+```
+db.products.updateOne({_id: 1}, {$set: {stock: 32}})
+```
+DELETE
+```
+db.products.deleteOne({_id: 2})
+```
+
+### Relationships in MongoDB
+
+```
+db.products.insert(
+  {
+    _id: 2,
+    name: "Pencil",
+    price: 0.80,
+    stock: 43,
+    reviews: [
+      {
+        authorName: "Sally",
+        rating: 5,
+        review: "Best pencil ever!"
+      },
+      {
+        authorName: "John",
+        rating: 5,
+        review: "Awesome pencil!"
+      }
+    ]
+  }
+)
+
+db.products.insert(
+  {_id: 1},
+  {$set: {
+    reviews: [
+      {
+        authorName: "Jane",
+        rating: 4.9,
+        review: "Almost perfect"
+      },
+      {
+        authorName: "Paul",
+        rating: 5,
+        review: "Great fit for my needs"
+      }
+    ]
+  }}
+)
+```
+
+### MongoDB with Nodejs
+
+```
+// jshint esversion:6
+
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
+// Connection URL
+const url = 'mongodb://localhost:27017';
+
+// Database Name
+const dbName = 'fruitsDB';
+
+// Create a new MongoClient
+const client = new MongoClient(url, { useNewUrlParser: true });
+
+// Use connect method to connect to the Server
+client.connect(function(err) {
+  assert.equal(null, err);
+  console.log("Connected successfully to server");
+
+  const db = client.db(dbName);
+
+  findDocuments(db, function() {
+    client.close();
+  });
+});
+
+const insertDocuments = function(db, callback) {
+  // Get the documents collection
+  const collection = db.collection('fruits');
+  // Insert some documents
+  collection.insertMany([
+    {
+      name: "Apple",
+      score: 8,
+      review: "Great fruit"
+    },
+    {
+      name: "Orange",
+      score: 6,
+      review: "Sour"
+    },
+    {
+      name: "Banana",
+      score: 9,
+      review: "Great for old"
+    }
+  ], function(err, result) {
+    assert.equal(err, null);
+    assert.equal(3, result.result.n);
+    assert.equal(3, result.ops.length);
+    console.log("Inserted 3 documents into the collection");
+    callback(result);
+  });
+}
+
+const findDocuments = function(db, callback) {
+  // Get the documents collection
+  const collection = db.collection('fruits');
+  // Find some documents
+  collection.find({}).toArray(function(err, fruits) {
+    assert.equal(err, null);
+    console.log("Found the following records");
+    console.log(fruits);
+    callback(fruits);
+  });
+}
+```
+
+## Mongoose
+
+```
+// jshint esversion:6
+
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost:27017/fruitsDB', { useNewUrlParser: true });
+
+const fruitSchema = new mongoose.Schema({
+  name: String,
+  rating: Number,
+  review: String
+});
+
+const Fruit = mongoose.model('Fruit', fruitSchema);
+
+const fruit = new Fruit({
+  name: "Apple",
+  rating: 7,
+  review: "Red apples are red"
+});
+
+// fruit.save();
+
+// create person schema
+const personSchema = new mongoose.Schema({
+  name: String,
+  age: Number
+});
+
+// create model of a person
+const Person = mongoose.model('Person', personSchema);
+
+const person = new Person({
+  name: 'John',
+  age: 37
+});
+
+// person.save()
+
+// insert data
+const kiwi = new Fruit({
+  name: "Kiwi",
+  score: 10,
+  review: "King of the fruit"
+});
+
+const orange = new Fruit({
+  name: "Orange",
+  score: 6,
+  review: "Sour"
+});
+
+const banana = new Fruit({
+  name: "Banana",
+  score: 10,
+  review: "Long and sweet"
+});
+
+Fruit.insertMany([kiwi, orange, banana], function(err){
+  if(err){
+    console.log(err);
+  } else {
+    console.log("Successfully saved all the fruits to fruitsDB");
+  }
+});
+
+
+```
+
+### Read db using mongoose
+
+```
+// mongo
+const findDocuments = function(db, callback) {
+  // Get the documents collection
+  const collection = db.collection('fruits');
+  // Find some documents
+  collection.find({}).toArray(function(err, fruits) {
+    assert.equal(err, null);
+    console.log("Found the following records");
+    console.log(fruits);
+    callback(fruits);
+  });
+}
+
+// mongoose
+Fruit.find(function(err, fruits){
+  if(err){
+    console.log(err);
+  } else {
+
+    mongoose.connection.close();
+    
+    fruits.forEach(function(fruit){
+      console.log(fruit.name);
+    });
+  }
+});
+
+
+```
+
+### Data Validation with Mongoose
+
+```
+const fruitSchema = new mongoose.Schema({
+  name: String,
+  rating: {
+    type: Number,
+    min: 1,
+    max: 10
+  },
+  review: String
+});
+
+```
+
+### Updating and Deleting Data using Mongoose
+
+```
+// find
+Fruit.find(function(err, fruits){
+  if(err){
+    console.log(err);
+  } else {
+
+    mongoose.connection.close();
+
+    fruits.forEach(function(fruit){
+      console.log(fruit.name);
+    });
+  }
+});
+
+// update
+Fruit.updateOne({_id: '5c003c8b9701d231880bc7db'}, {name: 'Peach'}, function(err){
+  if (err){
+    console.log(err);
+  } else {
+    console.log('Successfully updated the document');
+  }
+});
+
+// delete
+Fruit.deleteOne({name: 'Peach'}, function(err) {
+  if(err) {
+    console.log(err);
+  } else {
+    console.log('Successfully deleted the document');
+  }
+});
+
+```
